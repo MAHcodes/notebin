@@ -18,17 +18,13 @@ interface ITruncateProps extends IButtonProps {
 
 const Truncate = ({
   content,
-  length = 4,
+  length,
   iconOnly = false,
   ...props
 }: ITruncateProps) => {
   const { isCopied, isError, copyToClipboard } = useCopy();
 
-  const color = isCopied
-    ? "text-green-600 dark:text-green-400"
-    : isError
-    ? "text-red-600 dark:text-red-400"
-    : "";
+  const color = isCopied ? "text-green-400" : isError ? "text-red-400" : "";
 
   return (
     <Fragment>
@@ -39,7 +35,7 @@ const Truncate = ({
           ? "Copied!"
           : isError
           ? "Error"
-          : shortenHash(content)}
+          : shortenHash(content, length)}
       </span>
       <Button
         className={color}

@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { useNostr } from "nostr-react";
 import type { Event, Filter } from "nostr-tools";
 import { useEffect, useState } from "react";
+import Posts from "../Posts";
 import ArchiveNotes from "./ArchiveNotes";
 
 export default function ArchivePage() {
@@ -10,11 +11,12 @@ export default function ArchivePage() {
   const POSTS_PER_PAGE = 10;
   const { connectedRelays } = useNostr();
   const [events, setEvents] = useState<Event[]>([]);
-  const [numPages, setnumPages] = useState<number>();
+  const [numPages, setNumPages] = useState<number>(0);
 
   const [filter, setFilter] = useState<Filter>({
     kinds: [2222],
     limit: 100,
+    authors: undefined,
   });
 
   if (pathname) {
@@ -36,24 +38,24 @@ export default function ArchivePage() {
         if (eventArray.length) {
           const length = Math.ceil(eventArray.length / POSTS_PER_PAGE);
           if (length) {
-            setnumPages(length);
+            setNumPages(length);
           }
         }
-        console.log("numPages", numPages);
+        /* console.log("numPages", numPages); */
         sub.unsub();
       });
     });
   }, [filter, connectedRelays]);
 
   return (
-    <div className="flex flex-col justify-center gap-3">
-      <h1 className="text-3xl">Note Archive</h1>
+    <Posts title="Note Archive" className="mx-auto">
       <ArchiveNotes
         postPerPage={POSTS_PER_PAGE}
         events={events}
         numPages={numPages}
+        filter={filter}
         setFilter={setFilter}
       />
-    </div>
+    </Posts>
   );
 }
